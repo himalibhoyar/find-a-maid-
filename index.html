@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Finding a Maid, Made Easier with AI — Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFE9DF;
+    --surface:#FFFFFF;
+    --ink:#21281F;
+    --ink-soft:#666F5E;
+    --primary:#2F6B4F;
+    --primary-light:#E4EDE6;
+    --gold:#C99A3E;
+    --gold-light:#F7EEDA;
+    --ai:#5C6BC0;
+    --ai-light:#EAEDFB;
+    --border:#DDD5C5;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:'Poppins',sans-serif;
+    color:var(--ink);
+  }
+  .page{
+    max-width:1240px;
+    margin:0 auto;
+    padding:72px 60px 110px;
+  }
+  .narrow{max-width:620px;}
+  .eyebrow{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--primary);
+    margin-bottom:12px;
+  }
+  h1{
+    font-size:40px;
+    font-weight:700;
+    line-height:1.18;
+    margin:0 0 14px;
+    letter-spacing:-.01em;
+    max-width:760px;
+  }
+  .intro{
+    font-size:16px;
+    color:var(--ink-soft);
+    line-height:1.65;
+    max-width:600px;
+  }
+  .meta-row{
+    display:flex;
+    gap:40px;
+    margin-top:28px;
+    padding-top:22px;
+    border-top:1px solid var(--border);
+  }
+  .meta-item .k{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin-bottom:4px;}
+  .meta-item .v{font-size:13.5px; font-weight:600;}
+
+  section{margin-top:72px;}
+  .s-eyebrow{
+    font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:8px;
+  }
+  h2{
+    font-size:24px; font-weight:700; margin:0 0 16px;
+  }
+  p{font-size:14.5px; line-height:1.7; color:var(--ink); margin:0 0 14px;}
+  .lead{font-size:17px; font-weight:500; color:var(--ink); line-height:1.6;}
+
+  .callout{
+    background:var(--primary-light);
+    border-radius:14px;
+    padding:18px 20px;
+    font-size:14px;
+    line-height:1.6;
+    color:var(--ink);
+    margin:18px 0;
+    max-width:620px;
+  }
+  .callout.ai{background:var(--ai-light);}
+  .callout b{color:var(--primary);}
+  .callout.ai b{color:var(--ai);}
+
+  .bullet-list{margin:0 0 8px; padding:0; list-style:none; max-width:620px;}
+  .bullet-list li{
+    font-size:14px;
+    line-height:1.6;
+    padding-left:22px;
+    position:relative;
+    margin-bottom:10px;
+  }
+  .bullet-list li::before{
+    content:"";
+    position:absolute;
+    left:0; top:7px;
+    width:8px; height:8px;
+    border-radius:2px;
+    background:var(--primary);
+  }
+
+  /* ---- flow diagram ---- */
+  .flow-diagram{
+    display:flex;
+    align-items:center;
+    gap:0;
+    margin-top:20px;
+    overflow-x:auto;
+    padding-bottom:8px;
+  }
+  .flow-col{display:flex; flex-direction:column; gap:14px; flex:0 0 auto;}
+  .flow-box{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:14px 18px; font-size:13px; font-weight:600; white-space:nowrap; text-align:center;
+    min-width:150px;
+  }
+  .flow-box.ai{border-color:var(--ai); background:var(--ai-light); color:var(--ai);}
+  .flow-box.hub{background:var(--primary); color:#fff; border-color:var(--primary);}
+  .flow-arrow{flex:0 0 auto; width:40px; height:2px; background:var(--border); position:relative; align-self:center;}
+  .flow-arrow::after{content:''; position:absolute; right:-1px; top:-4px; border:5px solid transparent; border-left-color:var(--border);}
+  .flow-arrow.vert{width:2px; height:34px; margin:0 auto;}
+  .flow-arrow.vert::after{right:-4px; top:auto; bottom:-1px; border-left-color:transparent; border-top-color:var(--border);}
+  .flow-note{font-size:12px; color:var(--ink-soft); margin-top:14px; max-width:600px;}
+
+  /* ---- screens ---- */
+  .screens-row{display:flex; gap:36px; overflow-x:auto; padding:14px 4px 30px;}
+  .screen-block{flex:0 0 auto; width:230px; display:flex; flex-direction:column; align-items:center;}
+  .screen-caption{margin-top:18px; text-align:center;}
+  .screen-caption .tagrow{display:flex; align-items:center; justify-content:center; gap:6px;}
+  .screen-caption .t{font-weight:700; font-size:13.5px;}
+  .screen-caption .newtag{font-size:9px; font-weight:700; background:var(--ai); color:#fff; padding:2px 7px; border-radius:6px; letter-spacing:.03em;}
+  .screen-caption .d{font-size:12px; color:var(--ink-soft); margin-top:5px; line-height:1.55;}
+
+  .phone{
+    width:230px; height:470px; background:var(--ink); border-radius:34px; padding:7px;
+    box-shadow:0 26px 50px -18px rgba(33,40,31,0.28); flex-shrink:0;
+  }
+  .phone .screen{width:100%; height:100%; background:var(--surface); border-radius:27px; overflow:hidden; position:relative; font-family:'Poppins',sans-serif;}
+  .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:86px; height:18px; background:var(--ink); border-radius:0 0 12px 12px; z-index:5;}
+  .sbar{display:flex; justify-content:space-between; padding:12px 16px 2px; font-size:10px; font-weight:700;}
+  .app-body{padding:6px 15px 12px; height:calc(100% - 26px); display:flex; flex-direction:column;}
+  .app-head{font-size:13.5px; font-weight:700; text-align:center; padding:6px 0 10px;}
+
+  .search-bar{background:var(--bg); border-radius:10px; padding:9px 12px; font-size:10.5px; color:var(--ink-soft); display:flex; align-items:center; gap:6px;}
+  .ai-card{background:var(--ai-light); border:1.3px dashed var(--ai); border-radius:12px; padding:10px 12px; margin-top:8px; display:flex; gap:8px; align-items:center;}
+  .ai-card .spark{width:22px; height:22px; border-radius:7px; background:var(--ai); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .ai-card .txt{font-size:10px; font-weight:700; color:var(--ai);}
+  .ai-card .sub{font-size:8.5px; color:#7b86c9; margin-top:1px;}
+
+  .sect-lbl{font-size:9.5px; font-weight:700; color:var(--ink-soft); margin-top:12px; margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em;}
+  .svc-row{display:flex; gap:8px;}
+  .svc-tile{flex:1; background:var(--bg); border-radius:11px; padding:8px 6px; text-align:center; font-size:8.5px; font-weight:700;}
+  .svc-tile .ic{width:26px; height:26px; border-radius:8px; background:var(--primary-light); margin:0 auto 5px;}
+
+  .list-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border);}
+  .list-row .ic{width:26px; height:26px; border-radius:8px; background:var(--gold-light); flex-shrink:0;}
+  .list-row .txt .t{font-size:10.5px; font-weight:700;}
+  .list-row .txt .s{font-size:9px; color:var(--ink-soft);}
+
+  .btn{background:var(--primary); color:#fff; font-weight:700; font-size:11px; text-align:center; padding:10px; border-radius:11px; margin-top:10px;}
+  .btn.ai{background:var(--ai);}
+  .btn.ghost{background:transparent; border:1.3px solid var(--border); color:var(--ink);}
+
+  .chat-wrap{flex:1; display:flex; flex-direction:column; gap:8px; overflow:hidden;}
+  .bubble{max-width:80%; padding:8px 11px; border-radius:12px; font-size:10px; line-height:1.4;}
+  .bubble.bot{background:var(--ai-light); color:var(--ink); align-self:flex-start; border-bottom-left-radius:3px;}
+  .bubble.user{background:var(--primary); color:#fff; align-self:flex-end; border-bottom-right-radius:3px;}
+  .chips{display:flex; gap:5px; flex-wrap:wrap; margin-top:4px;}
+  .chip{background:var(--surface); border:1.2px solid var(--ai); color:var(--ai); font-size:9px; font-weight:700; padding:5px 9px; border-radius:100px;}
+
+  .field{background:var(--bg); border-radius:10px; padding:9px 11px; margin-top:8px;}
+  .field .k{font-size:8px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; display:block; margin-bottom:2px;}
+  .field .v{font-size:10.5px; font-weight:700;}
+  .field.filled{border-left:3px solid var(--ai);}
+
+  .avatar{width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--primary)); margin:0 auto 8px;}
+  .badge-row{display:flex; justify-content:center; gap:6px; margin-top:4px;}
+  .badge{font-size:8.5px; font-weight:700; padding:3px 8px; border-radius:100px; background:var(--primary-light); color:var(--primary);}
+
+  .summary-card{background:var(--ai-light); border-radius:14px; padding:14px; margin-top:10px;}
+  .summary-card .lbl{font-size:8.5px; font-weight:700; color:var(--ai); text-transform:uppercase; letter-spacing:.04em;}
+  .summary-card .msg{font-size:11px; line-height:1.5; font-weight:600; margin-top:6px;}
+
+  /* ---- RICE table ---- */
+  .rice-table{
+    width:100%; max-width:900px;
+    border-collapse:separate; border-spacing:0; font-size:12.5px; margin-top:10px;
+    background:var(--surface); border-radius:14px; overflow:hidden; border:1px solid var(--border);
+  }
+  .rice-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:600; padding:12px 14px; background:var(--primary-light);}
+  .rice-table td{padding:12px 14px; border-top:1px solid var(--border);}
+  .rice-table tr.highlight td{background:var(--ai-light); font-weight:600;}
+  .rice-table td.score{font-weight:700; color:var(--primary);}
+  .rice-table tr.highlight td.score{color:var(--ai);}
+  .rice-formula{font-size:12px; color:var(--ink-soft); margin:14px 0 4px;}
+  .rice-formula b{color:var(--ink);}
+
+  .takeaway{display:flex; gap:12px; margin-top:18px; background:var(--ai-light); border-radius:14px; padding:16px 18px; max-width:820px;}
+  .takeaway .mark{font-size:18px; flex:0 0 auto; color:var(--ai);}
+  .takeaway p{font-size:13.5px; margin:0; line-height:1.6;}
+
+  .method-note{font-size:11.5px; color:var(--ink-soft); font-family:var(--mono); margin-top:12px; max-width:820px; line-height:1.6;}
+
+  .footer{margin-top:80px; padding-top:24px; border-top:1px solid var(--border); font-size:12.5px; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  @media (max-width:900px){
+    .page{padding:48px 24px 80px;}
+    h1{font-size:30px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="eyebrow">UX/UI Case Study · Product Design · 2026 Refresh</div>
+  <h1>Finding a maid, made easier with AI</h1>
+  <div class="intro">A 6-year-old booking app for hiring domestic help, revisited with one goal: replace slow manual searching with a quick conversation. Same core flow — just a faster way through it.</div>
+
+  <div class="meta-row">
+    <div class="meta-item"><div class="k">Role</div><div class="v">UI/UX Designer — Himali</div></div>
+    <div class="meta-item"><div class="k">Timeline</div><div class="v">Weekends only · Sat–Sun</div></div>
+    <div class="meta-item"><div class="k">Tools</div><div class="v">Figma</div></div>
+  </div>
+
+  <section class="narrow">
+    <div class="s-eyebrow">The Problem</div>
+    <h2>Booking help still felt like filling out a form</h2>
+    <p class="lead">People need domestic help they can trust — but finding it usually means scrolling long lists and adjusting filters one at a time.</p>
+    <div class="callout">
+      <b>The question this redesign answers:</b> what if booking felt like asking a friend, instead of filling out a form?
+    </div>
+  </section>
+
+  <section class="narrow">
+    <div class="s-eyebrow">Who This Is For</div>
+    <h2>Busy people, simple need</h2>
+    <ul class="bullet-list">
+      <li><b>Meera</b> — a working professional with two kids and little time to compare profiles by hand.</li>
+      <li>She doesn't think in filters ("2BHK, weekday mornings, ₹X"). She thinks in sentences: "I need someone for cooking and cleaning, mornings, weekdays."</li>
+      <li>That's the exact gap the AI assistant fills.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="s-eyebrow">The Flow</div>
+    <h2>Same journey, one new shortcut</h2>
+    <p class="narrow" style="margin-bottom:0;">The AI assistant sits <i>next to</i> the search bar, not instead of it. Anyone who prefers scrolling and filtering manually still can — both paths land on the same profile and booking screens.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-col">
+        <div class="flow-box hub">Home</div>
+      </div>
+      <div class="flow-col" style="align-items:center;">
+        <div class="flow-arrow" style="width:30px; transform:rotate(20deg); transform-origin:left;"></div>
+        <div class="flow-arrow" style="width:30px; transform:rotate(-20deg); transform-origin:left;"></div>
+      </div>
+      <div class="flow-col">
+        <div class="flow-box">Search &amp; Filter <span style="opacity:.55; font-weight:500;">(manual)</span></div>
+        <div class="flow-box ai">Ask AI Assistant · NEW</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-col"><div class="flow-box">Profile View</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-col"><div class="flow-box">Booking Request</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-col">
+        <div class="flow-box ai">AI Booking Summary · NEW</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-col"><div class="flow-box">Payment</div></div>
+    </div>
+    <div class="flow-note">Both paths converge back at <b>Profile View</b> — the AI assistant never forks the user into a separate experience.</div>
+  </section>
+
+  <section>
+    <div class="s-eyebrow">Key Screens</div>
+    <h2>What changed, screen by screen</h2>
+    <div class="screens-row">
+
+      <!-- Home -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">Home</div>
+            <div class="search-bar">🔍 Search maids near you</div>
+            <div class="ai-card"><div class="spark"></div><div><div class="txt">Tell us what you need</div><div class="sub">Chat instead of filtering</div></div></div>
+            <div class="sect-lbl">Popular services</div>
+            <div class="svc-row">
+              <div class="svc-tile"><div class="ic"></div>Cooking</div>
+              <div class="svc-tile"><div class="ic"></div>Cleaning</div>
+              <div class="svc-tile"><div class="ic"></div>Laundry</div>
+            </div>
+            <div class="sect-lbl">Top rated near you</div>
+            <div class="list-row"><div class="ic"></div><div class="txt"><div class="t">Priya S.</div><div class="s">4.8 ★ · 2 km away</div></div></div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">Home</div></div><div class="d">The "Tell us what you need" card sits beside the search bar — an added option, not a replacement.</div></div>
+      </div>
+
+      <!-- AI Chat -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">AI Assistant</div>
+            <div class="chat-wrap">
+              <div class="bubble bot">Hi Meera! What kind of help are you looking for?</div>
+              <div class="bubble user">Cooking and cleaning, mornings, weekdays.</div>
+              <div class="bubble bot">Got it. Any budget range in mind?</div>
+              <div class="chips"><div class="chip">₹8–10k</div><div class="chip">₹10–14k</div><div class="chip">Flexible</div></div>
+            </div>
+            <div class="btn ai">3 matches found</div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">AI Chat Assistant</div><span class="newtag">NEW</span></div><div class="d">Plain-language input, quick-reply chips for follow-ups — never a blank text box waiting to be filled.</div></div>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">Search &amp; Filter</div>
+            <div class="ai-card" style="padding:7px 10px;"><div class="spark" style="width:18px;height:18px;"></div><div class="txt" style="font-size:9px;">Ask AI to narrow this down</div></div>
+            <div class="field"><span class="k">Location</span><span class="v">2 km radius</span></div>
+            <div class="field"><span class="k">Availability</span><span class="v">Weekday mornings</span></div>
+            <div class="field"><span class="k">Budget</span><span class="v">₹8,000 – ₹14,000</span></div>
+            <div class="btn ghost" style="margin-top:auto;">Show 12 results</div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">Search &amp; Filter</div></div><div class="d">Original manual flow, unchanged — with a small AI shortcut added at the top for anyone who wants out early.</div></div>
+      </div>
+
+      <!-- Profile View -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">Profile</div>
+            <div class="avatar"></div>
+            <div style="text-align:center; font-weight:700; font-size:12.5px;">Priya S.</div>
+            <div class="badge-row"><div class="badge">Verified</div><div class="badge">4.8 ★</div></div>
+            <div class="sect-lbl">About</div>
+            <div class="field"><span class="k">Experience</span><span class="v">5 years · cooking &amp; cleaning</span></div>
+            <div class="field"><span class="k">Rate</span><span class="v">₹12,000 / month</span></div>
+            <div class="btn" style="margin-top:auto;">Request Booking</div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">Profile View</div></div><div class="d">Verified badge, rating, and pricing kept exactly as the original — this is the trust layer, so it stayed untouched.</div></div>
+      </div>
+
+      <!-- Booking Request -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">Booking Request</div>
+            <div class="field filled"><span class="k">Service</span><span class="v">Cooking &amp; Cleaning</span></div>
+            <div class="field filled"><span class="k">Schedule</span><span class="v">Weekday mornings</span></div>
+            <div class="field filled"><span class="k">Budget</span><span class="v">₹8,000–14,000</span></div>
+            <div class="field"><span class="k">Start date</span><span class="v">Select a date</span></div>
+            <div class="btn ai" style="margin-top:auto;">Confirm Details</div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">Booking Request</div></div><div class="d">Fields the AI already gathered arrive pre-filled (marked with the indigo edge) — Meera confirms instead of retyping.</div></div>
+      </div>
+
+      <!-- AI Booking Summary -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">Booking Summary</div>
+            <div class="summary-card">
+              <div class="lbl">AI Summary</div>
+              <div class="msg">You're booked with Priya — Mon/Wed/Fri, 9am–12pm, starting June 3rd.</div>
+            </div>
+            <div class="sect-lbl">Details</div>
+            <div class="list-row"><div class="ic"></div><div class="txt"><div class="t">Cooking &amp; Cleaning</div><div class="s">₹12,000/month</div></div></div>
+            <div class="btn" style="margin-top:auto;">Proceed to Payment</div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">AI Booking Summary</div><span class="newtag">NEW</span></div><div class="d">A plain-English confirmation instead of a plain receipt — written the way a friend would text it, not a system.</div></div>
+      </div>
+
+      <!-- Payment -->
+      <div class="screen-block">
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div class="sbar"><span>9:41</span><span>••••</span></div>
+          <div class="app-body">
+            <div class="app-head">Payment</div>
+            <div class="field"><span class="k">Monthly rate</span><span class="v">₹12,000</span></div>
+            <div class="field"><span class="k">Service fee</span><span class="v">₹300</span></div>
+            <div class="field"><span class="k">Pay with</span><span class="v">VISA •••• 4471</span></div>
+            <div class="btn" style="margin-top:auto;">Pay ₹12,300</div>
+            <div style="text-align:center; font-size:9px; color:var(--ink-soft); margin-top:8px;">Confirmed — Priya starts June 3rd</div>
+          </div>
+        </div></div>
+        <div class="screen-caption"><div class="tagrow"><div class="t">Payment &amp; Confirmation</div></div><div class="d">Original payment flow, retained — the AI's job was done two screens ago.</div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="s-eyebrow">Prioritization</div>
+    <h2>Why the AI assistant, and not something else first</h2>
+    <p class="narrow">Before building, I scored the AI assistant against other candidate features using <b>RICE</b> — a simple way to compare how much a feature is worth building relative to its cost.</p>
+
+    <div class="callout ai">
+      <b>RICE =</b> (Reach × Impact × Confidence) ÷ Effort. Higher score = better return for the work involved.
+    </div>
+
+    <table class="rice-table">
+      <tr><th>Feature</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th><th>Score</th></tr>
+      <tr class="highlight">
+        <td>AI Chat Assistant</td><td>8,000/mo</td><td>3</td><td>80%</td><td>4 wks</td><td class="score">480</td>
+      </tr>
+      <tr>
+        <td>Trust badges v2</td><td>8,000/mo</td><td>2</td><td>90%</td><td>2 wks</td><td class="score">720</td>
+      </tr>
+      <tr>
+        <td>Filter redesign only</td><td>8,000/mo</td><td>1</td><td>90%</td><td>1 wk</td><td class="score">720</td>
+      </tr>
+      <tr>
+        <td>Post-booking chat</td><td>3,000/mo</td><td>2</td><td>60%</td><td>3 wks</td><td class="score">120</td>
+      </tr>
+      <tr>
+        <td>Loyalty rewards</td><td>2,000/mo</td><td>1</td><td>50%</td><td>2 wks</td><td class="score">50</td>
+      </tr>
+    </table>
+
+    <div class="takeaway">
+      <div class="mark">→</div>
+      <p><b>Why AI won anyway:</b> trust badges and filter tweaks score higher on paper because they're cheap. But they don't fix the actual problem — slow, manual searching. The AI assistant has the biggest impact on the one thing this redesign set out to solve, so it was worth the extra effort.</p>
+    </div>
+
+    <div class="method-note">Scores estimated from typical engagement patterns for booking-style apps at this scale — not measured data from this specific product.</div>
+  </section>
+
+  <section class="narrow">
+    <div class="s-eyebrow">Reflection</div>
+    <h2>What I'd tell a younger version of this project</h2>
+    <p>Keep the structure that already works. Add only where it removes real effort. The AI layer here doesn't replace anything — it just gives people a faster way in, while the original path stays exactly where it was.</p>
+  </section>
+
+  <div class="footer">
+    <span>Himali — UI/UX Designer</span>
+    <span>Find A Maid · 2026 Refresh</span>
+  </div>
+
+</div>
+</body>
+</html>
